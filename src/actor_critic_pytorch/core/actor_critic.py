@@ -115,7 +115,9 @@ class ActorCritic:
         actor_loss: torch.Tensor = -log_prob * td_error.detach()
 
         # Compute the value function loss
-        critic_loss: torch.Tensor = td_error**2
+        critic_loss: torch.Tensor = (
+            0.5 * td_error**2
+        )  # multiply by 0.5 to avoid critic loss overwhelming actor loss (since we are sharing the weights)
 
         # Update the actor
         self._actor_optimizer.zero_grad()
@@ -188,6 +190,10 @@ class ActorCritic:
         return np.array(total_rewards)
 
 
-ac = ActorCritic(gym.make("CartPole-v1"), writer=SummaryWriter("logs/cartpole"))
+env = gym.make("CartPole-v1")
+writer = SummaryWriter("logs/cartpole")
+ac = ActorCritic(env, writer)
 ac.train(1000)
+env = gym.make("CartPole-v1")
+ac._env = env
 ac.evaluate(10)
