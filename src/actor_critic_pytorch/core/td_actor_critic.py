@@ -11,6 +11,8 @@ from tqdm import tqdm
 class TDActorCritic:
     """
     Basic (TD) Actor-Critic implementation, with separate networks for the actor and critic.
+    This can be viewed as A2C, as we approximate the advantage function with the TD error.
+    Updates are performed at every time step.
     The critic loss is the TD error and the actor loss is the policy gradient weighted by the TD error.
     """
 
@@ -194,7 +196,7 @@ class TDActorCritic:
 
 env = gym.make("CartPole-v1")
 writer = SummaryWriter("logs/cartpole")
-ac = ActorCritic(env, writer)
+ac = TDActorCritic(env, writer)
 ac.train(1000)
 env = gym.make("CartPole-v1")
 ac._env = env
