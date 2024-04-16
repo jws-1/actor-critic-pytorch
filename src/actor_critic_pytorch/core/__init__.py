@@ -1,2 +1,2 @@
 from .mlp import MLP
-from .actor_critic import ActorCritic
+from .td_actor_critic import TDActorCritic

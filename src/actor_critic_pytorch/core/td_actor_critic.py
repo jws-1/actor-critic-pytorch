@@ -8,9 +8,9 @@ from typing import Union, Tuple, List
 from tqdm import tqdm
 
 
-class ActorCritic:
+class TDActorCritic:
     """
-    Basic (TD) Actor-Critic implementation.
+    Basic (TD) Actor-Critic implementation, with separate networks for the actor and critic.
     The critic loss is the TD error and the actor loss is the policy gradient weighted by the TD error.
     """
 
@@ -75,6 +75,8 @@ class ActorCritic:
         )
 
     def _setup_optimizers(self):
+        # The actor has a lower learning rate than the critic
+        # this is so that the critic learns faster than the actor
         self._actor_optimizer = torch.optim.Adam(self._actor.parameters(), lr=3e-4)
         self._critic_optimizer = torch.optim.Adam(self._critic.parameters(), lr=1e-3)
 
@@ -117,7 +119,7 @@ class ActorCritic:
         # Compute the value function loss
         critic_loss: torch.Tensor = (
             0.5 * td_error**2
-        )  # multiply by 0.5 to avoid critic loss overwhelming actor loss (since we are sharing the weights)
+        )  # multiply by 0.5 to avoid critic loss overwhelming actor loss
 
         # Update the actor
         self._actor_optimizer.zero_grad()
